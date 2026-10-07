@@ -1,0 +1,395 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewBag.Title - Shopping Cart</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background-color: #eaeded;
+            color: #0f1111;
+        }
+        .navbar {
+            background-color: #131921;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 20px;
+            width: 100%;
+            position: relative;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+        }
+            .logo img {
+                height: 30px;
+                display: block;
+                object-fit: contain;
+            }
+        .search-box {
+            display: flex;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 45%;
+            max-width: 700px;
+            min-width: 280px;
+            height: 38px;
+        }
+            .search-box input {
+                width: 100%;
+                height: 100%;
+                padding: 0 12px;
+                border: none;
+                outline: none;
+                border-radius: 4px 0 0 4px;
+                font-size: 14px;
+            }
+            .search-box button {
+                height: 100%;
+                padding: 0 18px;
+                background-color: #febd69;
+                border: none;
+                border-radius: 0 4px 4px 0;
+                cursor: pointer;
+                font-weight: bold;
+                color: #111;
+                flex-shrink: 0;
+            }
+                .search-box button:hover {
+                    background-color: #f3a847;
+                }
+        .menu {
+            display: flex;
+            align-items: center;
+            list-style: none;
+            gap: 18px;
+            white-space: nowrap;
+            margin-left: auto;
+            flex-shrink: 0;
+        }
+            .menu a {
+                color: #ffffff;
+                text-decoration: none;
+                font-size: 14px;
+                display: flex;
+                align-items: center;
+                gap: 5px;
+            }
+                .menu a:hover {
+                    color: #febd69;
+                }
+            .menu::before {
+                content: "";
+                display: inline-block;
+                width: 22px;
+                height: 15px;
+                background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"><rect width="300" height="200" fill="%23DA251D"/><polygon fill="%23FFFF00" points="150,50 161.76,86.18 199.81,86.18 169.02,108.54 180.78,144.72 150,122.36 119.22,144.72 130.98,108.54 100.19,86.18 138.24,86.18"/></svg>');
+                background-size: cover;
+                font-weight: bold;
+                margin-bottom: 5px;
+                line-height: 1.3;
+            }
+        .green {
+            color: #007600;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .gift-label {
+            font-size: 12px;
+            display: block;
+            margin-bottom: 10px;
+        }
+        .actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+        }
+        .qty {
+            display: flex;
+            align-items: center;
+            border: 1px solid #d5d9d9;
+            border-radius: 8px;
+            background-color: #f0f2f2;
+            padding: 2px 8px;
+        }
+            .qty button {
+                background: none;
+                border: none;
+                cursor: pointer;
+                padding: 2px 6px;
+                font-size: 14px;
+            }
+            .qty span {
+                padding: 0 8px;
+                font-weight: bold;
+            }
+
+        .price {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: right;
+        }
+
+            .price.red {
+                color: #b12704;
+            }
+
+        .subtotal-text {
+            text-align: right;
+            font-size: 18px;
+            padding-top: 15px;
+        }
+
+        .checkout-box {
+            background: #fff;
+            padding: 20px;
+            border-radius: 4px;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            background-color: #ffd814;
+            border: 1px solid #fcd200;
+            border-radius: 20px;
+            padding: 10px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 12px;
+            box-shadow: 0 2px 5px rgba(213,217,217,.5);
+        }
+
+            .checkout-btn:hover {
+                background-color: #f7ca00;
+            }
+
+        .addons-box {
+            background: #fff;
+            padding: 15px;
+            border-radius: 4px;
+        }
+
+            .addons-box h4 {
+                font-size: 14px;
+                margin-bottom: 12px;
+            }
+
+        .addon-item {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+            align-items: center;
+        }
+
+            .addon-item img {
+                width: 50px;
+                height: 50px;
+                object-fit: contain;
+            }
+
+        .addon-info {
+            font-size: 12px;
+        }
+
+        .btn-add {
+            background-color: #ffd814;
+            border: 1px solid #fcd200;
+            border-radius: 15px;
+            padding: 4px 12px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        .tabs {
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+        }
+
+            .tabs .active {
+                font-weight: bold;
+                border-bottom: 2px solid #e77600;
+                padding-bottom: 5px;
+                margin-right: 15px;
+            }
+    </style>
+</head>
+<body>
+
+    <header class="navbar">
+        <a href="#" class="logo">
+            <img src="~/Controllers/image/logoamazon.png" alt="Amazon Logo" />
+        </a>
+
+        <div class="search-box">
+            <input type="text" placeholder="Search Amazon" />
+            <button type="submit">Go</button>
+        </div>
+
+        <ul class="menu">
+            <li><a href="#">Your Account</a></li>
+            <li><a href="#">Help</a></li>
+            <li><a href="#">Cart</a></li>
+        </ul>
+    </header>
+
+    <nav class="sub-navbar">
+        <a href="#"><strong>All</strong></a>
+        <a href="#">Today's Deals</a>
+        <a href="#">Customer Service</a>
+        <a href="#">Registry</a>
+        <a href="#">Gift Cards</a>
+        <a href="#">Sell</a>
+    </nav>
+
+    <div class="cart-container">
+
+        <div class="cart-left">
+            <div class="box-cart">
+                <a href="#" class="link">Women's V-Neck Tops</a>
+                <div class="price red" style="font-size: 14px;">$23.99</div>
+                <button class="btn-add">Add to Cart</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="cart-box">
+        <div class="cart-header">
+            <h1>Shopping Cart</h1>
+            <a href="#" class="deselect-link">Deselect all items</a>
+        </div>
+
+
+        <div class="cart-item">
+            <input type="checkbox" class="item-select" checked />
+            <div class="item-image">
+                <img src="~/Controllers/image/giày 2.png" alt="giay" />
+            </div>
+            <div class="item-details">
+                <div class="item-title">Tommy Hilfiger Women's Leather Saddle Shoulder Bag with Removable Crossbody Strap</div>
+                <div class="stock-status">In Stock</div>
+                <div class="free-return">FREE International Returns</div>
+                <div class="gift-checkbox">
+                    <input type="checkbox" id="gift1" checked />
+                    <label for="gift1">This is a gift <a href="#">Learn more</a></label>
+                </div>
+                <div class="item-controls">
+                    <div class="qty-counter">
+                        <button class="qty-btn">-</button>
+                        <span class="qty-val">1</span>
+                        <button class="qty-btn">+</button>
+                    </div>
+                    <span class="v-divider">|</span>
+                    <a href="#" class="action-link">Delete</a>
+                    <span class="v-divider">|</span>
+                    <a href="#" class="action-link">Save for later</a>
+                    <span class="v-divider">|</span>
+                    <a href="#" class="action-link">Compare with similar items</a>
+                    <span class="v-divider">|</span>
+                    <a href="#" class="action-link">Share</a>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="cart-item">
+            <input type="checkbox" class="item-select" checked />
+            <div class="item-image">
+                <img src="~/Controllers/image/quần 2.png" alt="quan" />
+            </div>
+            <div class="item-details">
+                <div class="item-title">Sam Edelman Women's Rosa Pump, Cape Blue, 10</div>
+                <div class="stock-status">In Stock</div>
+                <div class="gift-checkbox">
+                    <input type="checkbox" id="gift2" checked />
+                    <label for="gift2">This is a gift <a href="#">Learn more</a></label>
+                </div>
+                <div class="item-specs">
+                    <strong>Size:</strong> 10<br />
+                    <strong>Color:</strong> Cape Blue
+                </div>
+                <div class="item-controls">
+                    <div class="qty-counter">
+                        <button class="qty-btn">-</button>
+                        <span class="qty-val">2</span>
+                        <button class="qty-btn">+</button>
+                    </div>
+                    <span class="v-divider">|</span>
+                    <a href="#" class="action-link">Delete</a>
+                    <span class="v-divider">|</span>
+                    <a href="#" class="action-link">Save for later</a>
+                    <span class="v-divider">|</span>
+                    <a href="#" class="action-link">Compare with similar items</a>
+                    <span class="v-divider">|</span>
+                    <a href="#" class="action-link">Share</a>
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="cart-item">
+            <input type="checkbox" class="item-select" checked />
+            <div class="item-image">
+                <img src="~/Controllers/image/quần 2.png" alt="Newchoice Tops" />
+            </div>
+            <div class="item-details">
+                <div class="item-title">Newchoice Dressy Casual Tops for Women, Collared V Neck 3/4 Sleeve Blouses Loose Fitting Tunic Tops (Sage Green, XL)</div>
+                <div class="stock-status">In Stock</div>
+                <div class="gift-checkbox">
+                    <input type="checkbox" id="gift3" checked />
+                    <label for="gift3">This is a gift <a href="#">Learn more</a></label>
+                </div>
+                <div class="item-specs">
+                    <strong>Size:</strong> X-Large<br />
+                    <strong>Color:</strong> Sage Green
+                </div>
+                <div class="item-controls">
+                    <div class="qty-counter">
+                        <button class="qty-btn">-</button>
+                        <span class="qty-val">3</span>
+                        <button class="qty-btn">+</button>
+                    </div>
+                    <span class="v-divider">|</span>
+                    <a href="#" class="action-link">Delete</a>
+                    <span class="v-divider">|</span>
+                    <a href="#" class="action-link">Save for later</a>
+                    <span class="v-divider">|</span>
+                    <a href="#" class="action-link">Compare with similar items</a>
+                    <span class="v-divider">|</span>
+                    <a href="#" class="action-link">Share</a>
+                </div>
+            </div>
+        </div>
+
+       
+        <div class="subtotal-row">
+            Subtotal (6 items): <strong>$310.96</strong>
+        </div>
+    </div>
+
+    <div class="cart-box">
+        <h2>Your Items</h2>
+        <div class="your-items-tabs">
+            <span class="tab-item">No items saved for later</span>
+            <a href="#" class="tab-item active">Buy it again</a>
+        </div>
+
+        
+        <div class="cart-item">
+            <div class="item-image">
+                <img src="~/Controllers/image/giày 1.png" alt="HOBIBEAR Barefoot Shoes" />
+            </div>
+
+            <main class="main-content">
+                @RenderBody()
+            </main>
